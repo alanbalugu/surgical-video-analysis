@@ -2,9 +2,10 @@ import cv2
 import os
 import pandas as pd
 import numpy as np
+from matplotlib import pyplot as plt
+
 
 def get_video_dimensions(trial_ID):
-
     input_df = pd.read_csv("socal_trial_outcomes.csv")
     height = input_df.loc[input_df["trial_id"] == trial_ID]["trial_video_height"].iloc[0]
     width = input_df.loc[input_df["trial_id"] == trial_ID]["trial_video_width"].iloc[0]
@@ -12,24 +13,19 @@ def get_video_dimensions(trial_ID):
     return width, height
 
 def get_bounding_box_list_row(tool_row):
-
     return [ tool_row["x1"], tool_row["y1"], tool_row["x2"], tool_row["y2"] ]
 
 
 def get_bounding_box_list_df(tool_df):
-
     return [ tool_df["x1"].iloc[0], tool_df["y1"].iloc[0], tool_df["x2"].iloc[0], tool_df["y2"].iloc[0] ]
 
-
 def calc_bounding_box_area(x1, y1, x2, y2):
-
     h = y2 - y1 + 1
     w = x2 - x1 + 1 
 
     return float(h*w)
 
 def get_num_frames(trial_ID):
-
     input_df = pd.read_csv("frame_to_trial_mapping.csv")
 
     max_frame_num = max(input_df.loc[input_df["trial_id"] == trial_ID]["frame_number"].tolist())
@@ -122,7 +118,7 @@ def calc_avg_precision(rec, prec):
     ap = 0
     for i in ii:
         ap = ap + np.sum((mrec[i] - mrec[i - 1]) * mpre[i])
-    # return [ap, mpre[1:len(mpre)-1], mrec[1:len(mpre)-1], ii]
+    
     return [ap, mpre[0:len(mpre) - 1], mrec[0:len(mpre) - 1], ii]
 
 #need to make sure truth and detections only contain detections from the same trial
@@ -380,8 +376,10 @@ def get_high_score_tools(data, tools, best_tool_thresholds):
 
     for frame in high_score_data["frame"].unique():
 
-        tools_in_frame_indices = high_score_data.loc[high_score_data["frame"] == frame].index.tolist()
-        tools_in_frame = list(high_score_data.loc[high_score_data["frame"] == frame]["label"])
+        right_frame_df = high_score_data.loc[high_score_data["frame"] == frame]
+
+        tools_in_frame_indices = right_frame_df.index.tolist()
+        tools_in_frame = list(right_frame_df["label"])
 
         #print(tools_in_frame, frame)
 
@@ -393,14 +391,14 @@ def get_high_score_tools(data, tools, best_tool_thresholds):
 
                     #print(tools_in_frame[tool_index], tools_in_frame[tool2_index])
 
-                    tool1_row = high_score_data.loc[(high_score_data["frame"] == frame) & (high_score_data["label"] == tools_in_frame[tool1_index]) & (high_score_data.index == tools_in_frame_indices[tool1_index])]
-                    tool2_row = high_score_data.loc[(high_score_data["frame"] == frame) & (high_score_data["label"] == tools_in_frame[tool2_index]) & (high_score_data.index == tools_in_frame_indices[tool2_index])]
+                    tool1_row = right_frame_df.loc[(right_frame_df["label"] == tools_in_frame[tool1_index]) & (right_frame_df.index == tools_in_frame_indices[tool1_index])]
+                    tool2_row = right_frame_df.loc[(right_frame_df["label"] == tools_in_frame[tool2_index]) & (right_frame_df.index == tools_in_frame_indices[tool2_index])]
 
                     if(tools_in_frame[tool1_index] != tools_in_frame[tool2_index]):
 
                         iou = calc_iou(get_bounding_box_list_df(tool1_row), get_bounding_box_list_df(tool2_row))
 
-                        if(iou > 0.85):
+                        if(iou > 0.9):
 
                             #print("two boxes are the same, but different")
 
@@ -417,9 +415,8 @@ def get_high_score_tools(data, tools, best_tool_thresholds):
                             
 
     high_score_data.drop(rows_to_drop, axis=0, inplace=True)
-
+    
     return high_score_data
-
 #----------------------------------------------------------------
 
 
@@ -491,6 +488,9 @@ def main():
 
             cv2.rectangle(copy_frame_image, top_left, bottom_right, (0,255,0), thickness= 3, lineType=cv2.LINE_8)
             cv2.putText(copy_frame_image, row["label"], (bottom_right[0]-120, top_left[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,255,0), 2)
+
+        cv2.putText(copy_frame_image, image[-13:-5], (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,255,0), 2)
+        cv2.putText(copy_frame_image, "blue=model, green=truth", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,255,0), 2)
 
         video.write(copy_frame_image)
 

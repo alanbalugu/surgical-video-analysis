@@ -211,8 +211,10 @@ def get_high_score_tools(data, tools, best_tool_thresholds):
 
     for frame in high_score_data["frame"].unique():
 
-        tools_in_frame_indices = high_score_data.loc[high_score_data["frame"] == frame].index.tolist()
-        tools_in_frame = list(high_score_data.loc[high_score_data["frame"] == frame]["label"])
+        right_frame_df = high_score_data.loc[high_score_data["frame"] == frame]
+
+        tools_in_frame_indices = right_frame_df.index.tolist()
+        tools_in_frame = list(right_frame_df["label"])
 
         #print(tools_in_frame, frame)
 
@@ -224,14 +226,14 @@ def get_high_score_tools(data, tools, best_tool_thresholds):
 
                     #print(tools_in_frame[tool_index], tools_in_frame[tool2_index])
 
-                    tool1_row = high_score_data.loc[(high_score_data["frame"] == frame) & (high_score_data["label"] == tools_in_frame[tool1_index]) & (high_score_data.index == tools_in_frame_indices[tool1_index])]
-                    tool2_row = high_score_data.loc[(high_score_data["frame"] == frame) & (high_score_data["label"] == tools_in_frame[tool2_index]) & (high_score_data.index == tools_in_frame_indices[tool2_index])]
+                    tool1_row = right_frame_df.loc[(right_frame_df["label"] == tools_in_frame[tool1_index]) & (right_frame_df.index == tools_in_frame_indices[tool1_index])]
+                    tool2_row = right_frame_df.loc[(right_frame_df["label"] == tools_in_frame[tool2_index]) & (right_frame_df.index == tools_in_frame_indices[tool2_index])]
 
                     if(tools_in_frame[tool1_index] != tools_in_frame[tool2_index]):
 
                         iou = calc_iou(get_bounding_box_list_df(tool1_row), get_bounding_box_list_df(tool2_row))
 
-                        if(iou > 0.85):
+                        if(iou > 0.9):
 
                             #print("two boxes are the same, but different")
 
@@ -241,14 +243,14 @@ def get_high_score_tools(data, tools, best_tool_thresholds):
 
                                 rows_to_drop.append(tool2_row.index[0])
                                 #print(frame, tool2_row.index[0], tools_in_frame[tool2_index], " vs ", tools_in_frame[tool1_index])
-                            
                             else:
 
                                 rows_to_drop.append(tool1_row.index[0])
                                 #print(frame, tool1_row.index[0], tools_in_frame[tool1_index], " vs ", tools_in_frame[tool2_index])
                             
-    high_score_data.drop(rows_to_drop, axis=0, inplace=True)
 
+    high_score_data.drop(rows_to_drop, axis=0, inplace=True)
+    
     return high_score_data
 
 
@@ -668,7 +670,6 @@ def generate_APMs_from_detections_file(fileName):
     all_tools = list(data["label"].unique())
     all_tools.sort()
 
-    #main_tools = ['suction', 'grasper', 'cottonoid', 'string', 'muscle']
     tools = ['suction', 'grasper', 'cottonoid', 'string', 'muscle']
     tools.sort()
 
