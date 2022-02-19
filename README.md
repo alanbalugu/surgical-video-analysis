@@ -3,57 +3,29 @@
 
 Bounding box video - Trial S102T2 - Green=ground truth, Blue=detected from YOLO model
 https://drive.google.com/file/d/1t9Pp4kXhnOFigSyO-WkpxN-M_ONKwNDo/view?usp=sharing
-
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@alanbalugu 
-alanbalugu
-/
-surgical-video-analysis
-Public
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-surgical-video-analysis/Steps.txt
-@alanbalugu
-alanbalugu Add files via upload
-Latest commit 10a005c 13 seconds ago
- History
- 1 contributor
-75 lines (45 sloc)  3.78 KB
    
-INPUTS:
+**INPUTS**:
 
-- Ground truth detections file (ex. socal.csv) has the true annotations in the following format:
-
-	frame				x1	y1	x2	y2	label
+a. Ground truth detections file (ex. socal.csv) has the true annotations in the following format:
+	
+	[frame] 				[x1]	[y1]	[x2]	[y2]	[label]
 
 	S201T1_frame_00000001.jpeg	409	520	824	884	drill
 
 	**frames with no labels have "N/A" in the columns
 	
-	- This information is used to create the ground truth annotation files for each frame used for training
+	This information is used to create the ground truth annotation files for each frame used for training
+	
 
-- socal_trial_outcomes.csv contains the size of the frames for each trial with the following column names:
+b. socal_trial_outcomes.csv contains the size of the frames for each trial with the following column names:
 
 	trial_video_width	trial_video_height
 
 	**default trial size is 1920 x 1280 if the file does not contain a valid size (i.e. missing or N/A)
 	
-	- This information is used to ensure that each frame is scaled properly when adjusting the bounding box coordinates
+	This information is used to ensure that each frame is scaled properly when adjusting the bounding box coordinates
 
-PROCESS:
+**PROCESS**:
 
 1. Convert the .csv file of ground truth detections into a set of corresponding .xml files that correspond
    to the PASCAL VOC labeling format. Each frame gets one .xml file. Use: XML_from_detections_list.py
