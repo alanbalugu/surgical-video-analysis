@@ -97,7 +97,8 @@ PROCESS:
 	b. Upload all .jpeg or .jpg (file extension doesn't matter here) to the aws s3 bucket created by the project (has a long name)
 	
 	c. Create the manifest files (for training and testing) that contains all the annotations for each frame as JSON lines. Use: rekognition_manifest.py
-		- This step uses the directory of .xml annotation files (PASCAV VOC format) to create the manifest files
+	
+		**This step uses the directory of .xml annotation files (PASCAV VOC format) to create the manifest files
 		
 	d. Upload the manifest files to the same s3 bucket as used before
 	
@@ -106,7 +107,8 @@ PROCESS:
 	d. Navigate to "dataset" page and check to make sure images have no errors, correct number of labeled and unlabeled, bboxes are shown etc
 	
 	e. Train the model
-		- Training cannot be stopped after started, so be sure that there are no issues before it starts. It will charge you ONLY if it succeeds.
+	
+		**Training cannot be stopped after started, so be sure that there are no issues before it starts. It will charge you ONLY if it succeeds.
 		
 	f. Look at the test set metrics after training is done.
 
