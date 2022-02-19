@@ -65,6 +65,39 @@ def getXMLsInDir(dir_path):
 
 	return image_list
 
+def get_trial_test_set():
+	return [
+
+		'S201T1', 'S201T2',
+		'S202T1', 'S202T2',
+		'S203T1', 'S203T2',
+		'S204T1', 'S204T2',
+		'S205T1', 'S205T2',
+		'S206T1', 'S206T2',
+		'S207T1', 'S207T2',
+
+		'S502T1', 'S502T2',
+		'S502T2',
+		'S504T1', 'S504T2',
+		'S505T1', 'S505T2',
+		'S506T1',
+		'S507T1', 'S507T2'
+	]
+
+
+"""Get the list of trial in the validation split"""
+def get_trial_validation_set():
+	return [
+
+		# New validation data
+		'S502T1', 'S502T2',
+		'S502T2',
+		'S504T1', 'S504T2',
+		'S505T1', 'S505T2',
+		'S506T1',
+		'S507T1', 'S507T2'
+	]
+
 
 def main():
 
@@ -80,26 +113,26 @@ def main():
 	BASE_DIR = "C:\\Users\\reach\\Documents\\SOCAL\\frames"
 	#DARKNET_IMGS_DIR = "C:\\Users\\reach\\Documents\\darknet-master\\darknet-master\\data\\obj" #contains all frames used with darknet
 
-	train_filename = BASE_DIR + "\\train_rekg_dark2.manifest"
-	test_filename = BASE_DIR + "\\test_rekg_dark2.manifest"
+	train_filename = BASE_DIR + "\\train_rekg_split2.manifest"
+	test_filename = BASE_DIR + "\\test_rekg_split2.manifest"
 
 	classes = ["drill", "suction", "muscle", "grasper", "cottonoid", "string", "scalpel", "tool"]
 
 	image_paths = getXMLsInDir(PASCAL_XML_DIR)
 	print(len(image_paths))
 
-	random.seed(123456)
-	random.shuffle(image_paths)
-
-	#create the train and test splits (80/20)
-	darknet_train_images, darknet_test_images = train_test_split(image_paths, test_size=0.2)
-
-	#dict to map image file to the right split
-	split_dict = {}
-	for img in darknet_train_images:
-		split_dict[img] = train_filename
-	for img in darknet_test_images:
-		split_dict[img] = test_filename
+	# random.seed(123456)
+	# random.shuffle(image_paths)
+	#
+	# #create the train and test splits (80/20)
+	# darknet_train_images, darknet_test_images = train_test_split(image_paths, test_size=0.2)
+	#
+	# #dict to map image file to the right split
+	# split_dict = {}
+	# for img in darknet_train_images:
+	# 	split_dict[img] = train_filename
+	# for img in darknet_test_images:
+	# 	split_dict[img] = test_filename
 
 	#open the test manifest file
 	test_file = open(test_filename, "w")
@@ -116,8 +149,8 @@ def main():
 			frame_name = os.path.split(frame["name"])  # get the trial + frame number
 
 			#S3 bucket location for the images (the bucket created by rekognition)
-			#make sure to use the right extension based on the images on S3 (i.e. .jpg vs .jpeg)
-			frame_dict["source-ref"] = "s3://custom-labels-console-us-east-1-b9a7b50e1f/images/" + frame_name[1][:-4] + ".jpeg"
+			#***make sure to use the right extension based on the images on S3 (i.e. .jpg vs .jpeg)
+			frame_dict["source-ref"] = "s3://custom-labels-console-us-east-1-acd05dc007/images/" + frame_name[1][:-4] + ".jpeg"
 
 			frame_dict_bounding_box = {}  # for the annotations
 			frame_dict_metadata = {}  # for the metadata
@@ -137,8 +170,8 @@ def main():
 			tool_annotations = []
 			metadata_objects = []
 
-			if(len(frame["tools"]) == 0):  #basically skip the images without any labels.
-				continue
+			# if(len(frame["tools"]) == 0):  #basically skip the images without any labels.
+			# 	continue
 
 			for tool in frame["tools"]:
 
@@ -164,12 +197,24 @@ def main():
 			frame_dict["bounding-box-metadata"] = frame_dict_metadata2
 
 			#add the frame to the right manifest file based on the split
+
+			trial_id = os.path.splitext(os.path.basename(image_path))[0][:-15]
+
+			if(trial_id in get_trial_test_set()):
+				json.dump(frame_dict, test_file)
+				test_file.write("\n")
+			else:
+				json.dump(frame_dict, train_file)
+				train_file.write("\n")
+			
+
+			'''
 			if(split_dict[image_path] == train_filename):
 				json.dump(frame_dict, train_file)
 				train_file.write("\n")
 			else:
 				json.dump(frame_dict, test_file)
-				test_file.write("\n")
+				test_file.write("\n")'''
 
 main()
 

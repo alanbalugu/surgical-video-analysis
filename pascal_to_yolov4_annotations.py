@@ -65,8 +65,8 @@ def convert_annotation(xml_path, output_path, image_path):
 
     tools = [i.find('name').text for i in root.iter('object')]
 
-    if(len(tools) == 0):
-        return False
+    # if(len(tools) == 0):
+    #     return False
 
     #find the class in the list of classes and use that index for the annotation
     for obj in root.iter('object'):
@@ -84,6 +84,38 @@ def convert_annotation(xml_path, output_path, image_path):
 
     return True  #means that the xml file was created
 
+def get_trial_test_set():
+    return [
+
+        'S201T1', 'S201T2',
+        'S202T1', 'S202T2',
+        'S203T1', 'S203T2',
+        'S204T1', 'S204T2',
+        'S205T1', 'S205T2',
+        'S206T1', 'S206T2',
+        'S207T1', 'S207T2',
+
+        'S502T1', 'S502T2',
+        'S502T2',
+        'S504T1', 'S504T2',
+        'S505T1', 'S505T2',
+        'S506T1',
+        'S507T1', 'S507T2'
+    ]
+
+
+"""Get the list of trial in the validation split"""
+def get_trial_validation_set():
+    return [
+
+        # New validation data
+        'S502T1', 'S502T2',
+        'S502T2',
+        'S504T1', 'S504T2',
+        'S505T1', 'S505T2',
+        'S506T1',
+        'S507T1' , 'S507T2'
+    ]
 
 def main():
 
@@ -101,7 +133,7 @@ def main():
         image_paths = getImagesInDir(full_img_path)
 
         #file path with the list of all images (needed for darknet -> rename to train.txt)
-        list_file = open("C:\\Users\\reach\\Documents\\SOCAL\\frames\\" + 'train_all_w_labels.txt', 'w')
+        list_file = open(dir_path + '\\train_sess_split.txt', 'w')
 
         test_counter = 0
 
@@ -110,11 +142,19 @@ def main():
             basename = os.path.basename(image_path)
             basename_no_ext = os.path.splitext(basename)[0]
 
-            done = convert_annotation(full_xml_path, output_path, image_path)
+            trial_id = os.path.splitext(os.path.basename(image_path))[0][:-15]
+
+            done = True
+            # converts the PASCAL to yolov4 format and saves it
+            #done = convert_annotation(full_xml_path, output_path, image_path)
 
             #this add the image to the darknet train.txt file. Correct path based on AlexeyAB dir structure.
-            if done: #build\darknet\x64\data\obj
-                list_file.write("data/obj/"+basename_no_ext+".jpg"+"\n")
+            #only do it if .xml file was created and saved
+            if done:
+                #change this line if you need using with a directory of .jpg files
+                if (trial_id not in get_trial_test_set()):
+
+                    list_file.write("data/obj/" + basename_no_ext + ".jpg" + "\n")
 
             test_counter += 1
 

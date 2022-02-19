@@ -118,7 +118,7 @@ def calc_avg_precision(rec, prec):
     ap = 0
     for i in ii:
         ap = ap + np.sum((mrec[i] - mrec[i - 1]) * mpre[i])
-    
+
     return [ap, mpre[0:len(mpre) - 1], mrec[0:len(mpre) - 1], ii]
 
 #need to make sure truth and detections only contain detections from the same trial
