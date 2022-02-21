@@ -8,7 +8,7 @@ https://drive.google.com/file/d/1t9Pp4kXhnOFigSyO-WkpxN-M_ONKwNDo/view?usp=shari
 
 a. Ground truth detections file (ex. socal.csv) has the true annotations in the following format:
 	
-	[frame] 				[x1]	[y1]	[x2]	[y2]	[label]
+	[frame] 			[x1]	[y1]	[x2]	[y2]	[label]
 
 	S201T1_frame_00000001.jpeg	409	520	824	884	drill
 
