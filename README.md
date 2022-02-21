@@ -17,7 +17,7 @@ a. Ground truth detections file (ex. socal.csv) has the true annotations in the 
 	This information is used to create the ground truth annotation files for each frame used for training
 	
 
-b. socal_trial_outcomes.csv contains the size of the frames for each trial with the following column names:
+b. socal_trial_outcomes.csv contains (along with other stuff) the size of the frames for each trial with the following column names:
 
 	trial_video_width	trial_video_height
 
@@ -41,13 +41,12 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 
 			[index of the tool class] [bbox center x] [bbox center y] [bbox width] [bbox height]
 
-			** all the values here are normalized to the size of the frame. i.e. scaled to [0,1]
+			**all the values here are normalized to the size of the frame. i.e. scaled to [0,1]
 
 		**the script also creates the train.txt file with the paths to all training images. 
-		  May need to adjust if you put images in a different path
-		   within darknet
+		  May need to adjust if you put images in a different path within darknet
 
-	b. Create the train.txt (and test.txt) files (IF NOT ALREADY DONE in Step a) with the proper image path within darknet directory. Use: pascal_to_yolov4_annotations.py
+	b. Create the train.txt (and test.txt) files (IF NOT ALREADY DONE in Step a) with the proper image paths within darknet directory (i.e. relative to darknet.exe).
 		**This step uses the directory of .xml annotation files (PASCAV VOC format)
 
 	c. To train yolov4-darknet, use the following guide: https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects. Try to compile/build with OPENCV flag enabled if possible.
@@ -55,8 +54,9 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 		- Follow the instruction on that page. ***BUT there are some inconsistencies potentially:
 
 			1. Put all the image files (HAS TO BE .JPG file format) and .txt annotation files in data/obj/ directory
+			   (NOT the build/darknet/x64/data/obj.... directory)
 			2. Make sure that obj.data and obj.names files are in the data/ directory
-			3. Put train.txt and test.txt in build/darknet/x64/data/ directory
+			3. Put train.txt and test.txt in data/ directory
 			4. Make sure yolo-obj.cfg file is altered properly. 
 				- Change random=1 to random=0 and mosaic=1 to mosaic=0 for CPU only training (i.e. no GPU)
 
@@ -65,7 +65,7 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 
 3. For AWS Rekognition training/testing:
 
-	a. Create a new project in AWS Rekognition.
+	a. Create a new project in AWS Rekognition. It will also create a S3 bucket for you automatically.
 	
 	b. Upload all .jpeg or .jpg (file extension doesn't matter here) to the aws s3 bucket created by the project (has a long name)
 	
