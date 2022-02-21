@@ -99,6 +99,6 @@ b. socal_trial_outcomes.csv contains (along with other stuff) the size of the fr
 	
 	![image](https://user-images.githubusercontent.com/55846088/154984599-4ad396f9-4cfb-4c3b-8c32-4ab146fad937.png)
 	
-	d. Use: darknet_detections.py to perform inference on a directory of .jpg images, calculate basic metrics, and create the detections list (same format as ground truth detections in INPUTS section)
+	d. Use: darknet_detections.py to perform inference on a directory of .jpg images and create the detections list (same format as ground truth detections in INPUTS section)
 
 
