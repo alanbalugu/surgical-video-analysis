@@ -49,7 +49,7 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 	b. Create the train.txt (and test.txt) files (IF NOT ALREADY DONE in Step a) with the proper image path within darknet directory. Use: pascal_to_yolov4_annotations.py
 		**This step uses the directory of .xml annotation files (PASCAV VOC format)
 
-	c. To train yolov4-darknet, use the following guide: https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects
+	c. To train yolov4-darknet, use the following guide: https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects. Try to compile/build with OPENCV flag enabled if possible.
 
 		- Follow the instruction on that page. ***BUT there are some inconsistencies potentially:
 
@@ -86,5 +86,16 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 
 4. (NOT DONE YET) For yolov4-darknet testing:
 
-	a. Use: yolov4-test.py 
+	a. Make sure that darknet was built/compiled properly and can perform inference (at least on the coco dataset)
+	
+	b. Ensure that the darknet directory has all the .cfg, .names, .data., .weights, and .jpg files all in the proper locations for training/testing. You can train on a different machine/AWS instance and simply copy the weights file into your local darknet directory. (Just make sure you know the path to it relative to darknet.exe)
+	
+	c. If using Windows machine **WITHOUT GPU** for testing darknet inference **WITH Python 3.8+** (older python3 version may not need this change):
+	
+		- Edit the "...Python3\Lib\ctypes\__init__.py file to change the default value for winmode to 0 (zero). This allows Python 3.8+ to access DLLs to run darknet inference
+	
+	![image](https://user-images.githubusercontent.com/55846088/154984599-4ad396f9-4cfb-4c3b-8c32-4ab146fad937.png)
+	
+	d. Use: darknet_detections.py to perform inference on a directory of .jpg images, calculate basic metrics, and create the detections list (same format as ground truth detections in INPUTS section)
+
 
