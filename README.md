@@ -43,7 +43,8 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 
 			** all the values here are normalized to the size of the frame. i.e. scaled to [0,1]
 
-		**the script also creates the train.txt file with the paths to all training images. May need to adjust if you put images in a different path
+		**the script also creates the train.txt file with the paths to all training images. 
+		  May need to adjust if you put images in a different path
 		   within darknet
 
 	b. Create the train.txt (and test.txt) files (IF NOT ALREADY DONE in Step a) with the proper image path within darknet directory. Use: pascal_to_yolov4_annotations.py
@@ -80,7 +81,8 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 	
 	e. Train the model
 	
-		**Training cannot be stopped after started, so be sure that there are no issues before it starts. It will charge you ONLY if it succeeds.
+		**Training cannot be stopped after started, so be sure that there are no issues before it starts. 
+		  It will charge you ONLY if it succeeds.
 		
 	f. Look at the test set metrics after training is done.
 
@@ -92,7 +94,8 @@ b. socal_trial_outcomes.csv contains the size of the frames for each trial with 
 	
 	c. If using Windows machine **WITHOUT GPU** for testing darknet inference **WITH Python 3.8+** (older python3 version may not need this change):
 	
-		- Edit the "...Python3\Lib\ctypes\__init__.py file to change the default value for winmode to 0 (zero). This allows Python 3.8+ to access DLLs to run darknet inference
+		- Edit the "...Python3\Lib\ctypes\__init__.py file to change the default value for winmode to 0 (zero). 
+		  (i.e. change to "winmode=0" in parameter list) This allows Python 3.8+ to access DLLs to run darknet inference
 	
 	![image](https://user-images.githubusercontent.com/55846088/154984599-4ad396f9-4cfb-4c3b-8c32-4ab146fad937.png)
 	
