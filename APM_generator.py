@@ -50,7 +50,7 @@ def count_frames_w_tool(data, search_thresh, tool):
 #uses high score data
 def count_frames_w_x_tools(data, num_tools):
 
-    frames_w_tools = [len(list(j)) for i,j in groupby(list(data))]
+    frames_w_tools = [len(list(j)) for i,j in groupby(list(data["frame"]))]
 
     return frames_w_tools.count(num_tools)
 
@@ -292,7 +292,7 @@ def get_video_dimensions(trial_ID):
     height = input_df.loc[input_df["trial_id"] == trial_ID]["trial_video_height"].iloc[0]
     width = input_df.loc[input_df["trial_id"] == trial_ID]["trial_video_width"].iloc[0]
 
-    if(isnan(height)):
+    if(math.isnan(height)):
         height = 1280
         width = 1920
 
@@ -485,6 +485,7 @@ def calculate_metrics(net_detections, truth, trial_ID, tools_list, IOUThreshold=
             gt = gts[dects[d][0]] if dects[d][0] in gts else []
 
             iouMax = 0
+            jmax=0
             for j in range(len(gt)):  #for each ground truth annotation in a specific frame
                 # print('Ground truth gt => %s' % (gt[j][3],))
 
