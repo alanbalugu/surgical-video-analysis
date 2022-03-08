@@ -9,8 +9,10 @@ Convert the PASCAL VOC format .xml file into a yolov4 annotation .txt file
 #directories to search for files
 
 #dirs = ['C:\\Users\\Ganesh Balu\\Documents\\SOCAL_frames\\frames']
-dirs = ['C:\\Users\\reach\\Documents\\SOCAL\\frames']
-classes = ["drill","suction","muscle","grasper","cottonoid","string","scalpel","tool"]
+#dirs = ['C:\\Users\\reach\\Documents\\SOCAL\\frames']
+dirs = ["D:\\so-spine"]
+#classes = ["drill","suction","muscle","grasper","cottonoid","string","scalpel","tool"]
+classes = ["durotomy", "grasper", "needle driver", "needle", "nerve hook"]
 
 #create a list of all image (.jpeg and .jpg) files in the directory
 def getImagesInDir(dir_path):
@@ -85,25 +87,26 @@ def convert_annotation(xml_path, output_path, image_path):
     return True  #means that the xml file was created
 
 def get_trial_test_set():
-    return [
+    # return [
+    #
+    #     'S201T1', 'S201T2',
+    #     'S202T1', 'S202T2',
+    #     'S203T1', 'S203T2',
+    #     'S204T1', 'S204T2',
+    #     'S205T1', 'S205T2',
+    #     'S206T1', 'S206T2',
+    #     'S207T1', 'S207T2',
+    #
+    #     'S502T1', 'S502T2',
+    #     'S502T2',
+    #     'S504T1', 'S504T2',
+    #     'S505T1', 'S505T2',
+    #     'S506T1',
+    #     'S507T1', 'S507T2'
+    # ]   #FOR SOCAL
 
-        'S201T1', 'S201T2',
-        'S202T1', 'S202T2',
-        'S203T1', 'S203T2',
-        'S204T1', 'S204T2',
-        'S205T1', 'S205T2',
-        'S206T1', 'S206T2',
-        'S207T1', 'S207T2',
-
-        'S502T1', 'S502T2',
-        'S502T2',
-        'S504T1', 'S504T2',
-        'S505T1', 'S505T2',
-        'S506T1',
-        'S507T1', 'S507T2'
-    ]
-
-
+    #sospine training: ['S1A3', 'S3A2', 'S8A3', 'S4A3', 'S3A3', 'S7A2', 'S2A2', 'S5A1', 'S6A1', 'S1A2', 'S5A3', 'S6A2', 'S7A1', 'S8A1', 'S3A1', 'S5A2', 'S7A3', 'S2A3', 'S4A2', 'Clip1']
+    return ['Clip0', 'S4A1', 'S8A2', 'S6A3']   #FOR SOSPINE
 """Get the list of trial in the validation split"""
 def get_trial_validation_set():
     return [
@@ -122,7 +125,7 @@ def main():
     #for each directory of images, create the xml files appropriately
     for dir_path in dirs:
 
-        full_img_path = dir_path + "\\JPEGImages"
+        full_img_path = dir_path + "\\images"
         #full_dir_path = "C:\\Users\\reach\\Documents\\darknet-master\\darknet-master\\data\\obj"
         full_xml_path = dir_path + "\\Pascal Format XML Annotations"
 
@@ -133,7 +136,8 @@ def main():
         image_paths = getImagesInDir(full_img_path)
 
         #file path with the list of all images (needed for darknet -> rename to train.txt)
-        list_file = open(dir_path + '\\train_sess_split.txt', 'w')
+        train_file = open(dir_path + '\\train_sess_split2.txt', 'w')
+        test_file = open(dir_path + '\\test_sess_split2.txt', 'w')
 
         test_counter = 0
 
@@ -144,23 +148,25 @@ def main():
 
             trial_id = os.path.splitext(os.path.basename(image_path))[0][:-15]
 
+           # print(trial_id)
             done = True
-            # converts the PASCAL to yolov4 format and saves it
-            #done = convert_annotation(full_xml_path, output_path, image_path)
+            # converts the PASCAL to yolov4 format and saves it *** comment this line for only train/test files
+            done = convert_annotation(full_xml_path, output_path, image_path)
 
             #this add the image to the darknet train.txt file. Correct path based on AlexeyAB dir structure.
             #only do it if .xml file was created and saved
             if done:
                 #change this line if you need using with a directory of .jpg files
                 if (trial_id not in get_trial_test_set()):
-
-                    list_file.write("data/obj/" + basename_no_ext + ".jpg" + "\n")
+                    train_file.write("data/obj/sospine/" + basename_no_ext + ".jpg" + "\n")
+                else:
+                    test_file.write("data/obj/sospine/" + basename_no_ext + ".jpg" + "\n")
 
             test_counter += 1
 
-        list_file.close()
+        train_file.close()
+        test_file.close()
 
         print("Finished processing: " + dir_path)
-
 
 main()
