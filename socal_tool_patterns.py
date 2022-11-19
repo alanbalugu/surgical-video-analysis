@@ -1251,10 +1251,12 @@ def main():
     # This is the file path for the YOLO4 detections file.
     detectName = "/Users/alanbalu/Library/CloudStorage/OneDrive-Personal/Alan/GUSOM 2025/Donoho Research/yolov4_socal_detections_4.7_fixed.csv"
     truthName = "socal.csv"
+    outcomeName = "socal_trial_outcomes.csv"
+    mappingName = "frame_to_trial_mapping.csv"
 
     # pass in the detections and ground truth annotations
     generate_APMs_from_detections_file(fileName=detectName, truthName=truthName,
-                                       outcomeFileName="socal_trial_outcomes.csv", trialFrameMapFileName="frame_to_trial_mapping.csv", showGraphs=False)
+                                       outcomeFileName=outcomeName, trialFrameMapFileName=mappingName, showGraphs=False)
 
 
 if __name__ == "__main__":
