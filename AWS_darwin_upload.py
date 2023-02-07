@@ -3,14 +3,12 @@ import sys
 import os
 import argparse
 
-#python3 AWS_darwin_upload_new.py --batch True --type video --storage_name donoholab1 --team_name surgical-data-science-collaborative --dataset_name site_102_donation_103 --api_key DmEt_0-.ijvbnnYicCjTLntK2R3UQwFGcdIJaSzO --fps 5 --testing True --files_list ".txt"
-
 api_key = ""
 team_slug = ""
 storage_name = ""
 dataset_slug = ""
 
-def upload(data_type, AWS_file_name, fps="native", testing=False,api_key="api-key"):
+def upload(data_type, AWS_file_name, fps="native", testing=False):
 
     print("uploading...", AWS_file_name, end=" ")
 
@@ -163,7 +161,7 @@ def main():
             for line in file:
 
                 file_name = line.strip()
-                upload(data_type=data_type, AWS_file_name=file_name, fps=fps, testing=testing, api_key=api_key)
+                upload(data_type=data_type, AWS_file_name=file_name, fps=fps, testing=testing)
 
 
 if __name__ == "__main__":
