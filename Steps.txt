@@ -20,14 +20,16 @@ INPUTS:
 
 PROCESS:
 
-1. Convert the .csv file of ground truth detections into a set of corresponding .xml files that correspond
-   to the PASCAL VOC labeling format. Each frame gets one .xml file. Use: XML_from_detections_list.py
+1. Convert the .csv file of ground truth detections into a set of corresponding .txt files that correspond
+   to the yolo format. Each frame gets one .txt file. Use: csv_to_yolo.py
 	
-	- These .xml files are in a standardized format that is well-known
+	- These .txt files are in a standardized format that is well-known
+
+	- Alternatively, you can use XML_from_detections_list.py to convert the .csv file of ground truth detections into .xml files in the Pascal VOC XML format
 
 2. For yolov4-darknet training:
 
-	a. Convert the .xml annotation files into the yolov4 annotation format. Use: pascal_to_yolov4_annotations.py
+	a. Convert the .xml annotation files into the yolov4 annotation format. Use: pascal_to_yolov4_annotations.py (if not already done)
 
 		- This format has each frame represented by one .txt file (with the same name as the image). Each line of a file
 		  contains the info for one label that is present on that frame. Format is:
@@ -39,8 +41,9 @@ PROCESS:
 		**the script also creates the train.txt file with the paths to all training images. May need to adjust if you put images in a different path
 		   within darknet
 
-	b. Create the train.txt (and test.txt) files (IF NOT ALREADY DONE in Step a) with the proper image path within darknet directory. Use: pascal_to_yolov4_annotations.py
-		**This step uses the directory of .xml annotation files (PASCAV VOC format)
+	b. Create the train.txt (and test.txt) files (IF NOT ALREADY DONE in Step a) with the proper image path within darknet directory.
+
+		- This is just a list of all the image files (with full path name) needed for training or testing.
 
 	c. To train yolov4-darknet, use the following guide: https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects
 
@@ -53,23 +56,5 @@ PROCESS:
 				- Change random=1 to random=0 and mosaic=1 to mosaic=0 for CPU only training (i.e. no GPU)
 
 			(for some reason, putting images in build/darknet/x64/data/obj/ as the instructions say does not seem to work)
-
-
-3. For AWS Rekognition training/testing:
-
-	a. Create a new project in AWS Rekognition.
-	b. Upload all .jpeg or .jpg (file extension doesn't matter here) to the aws s3 bucket created by the project (has a long name)
-	c. Create the manifest files (for training and testing) that contains all the annotations for each frame as JSON lines. Use: rekognition_manifest.py
-		**This step uses the directory of .xml annotation files (PASCAV VOC format) to create the manifest files
-	d. Upload the manifest files to the same s3 bucket as used before
-	e. Create the train and test datasets through the rekognition webpage (click SageMaker annotation option to use the manifest files from Step c)
-	d. Navigate to "dataset" page and check to make sure images have no errors, correct number of labeled and unlabeled, bboxes are shown etc
-	e. Train the model
-		**Training cannot be stopped after started, so be sure that there are no issues before it starts. It will charge you ONLY if it succeeds.
-	f. Look at the test set metrics after training is done.
-
-4. (NOT DONE YET) For yolov4-darknet testing:
-
-	a. Use: yolov4-test.py 
 
 
